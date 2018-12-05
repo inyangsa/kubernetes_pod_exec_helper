@@ -6,14 +6,8 @@ import (
 )
 
 func runBashOnPod(kubectlPath, podName string) error {
-    cwd, err := os.Getwd()
-    if err != nil {
-        panic(err)
-    }
-
     pa := os.ProcAttr {
         Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
-        Dir: cwd,
     }
 
     fmt.Println(">> Starting a new interactive shell")
@@ -21,12 +15,12 @@ func runBashOnPod(kubectlPath, podName string) error {
     cmd := []string{"kubectl", "exec", "-it", podName, "/bin/bash"}
     proc, err := os.StartProcess(kubectlPath, cmd, &pa)
     if err != nil {
-        panic(err)
+        return wrapError("failed to start bash on pod", err)
     }
 
     state, err := proc.Wait()
     if err != nil {
-        panic(err)
+        return wrapError("failed to wait on process execution")
     }
 
     fmt.Println("<< Exited shell:", state.String())
