@@ -25,5 +25,8 @@ func runBashOnPod(kubectlPath, podName string) error {
 
     fmt.Println("<< Exited shell:", state.String())
 
+    if !state.Success() {
+        return wrapError("Seems like something went wrong. Verify that the pod name is correct.")
+    }
     return nil
 }

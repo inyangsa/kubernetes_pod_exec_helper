@@ -7,6 +7,12 @@ import (
 )
 
 func main() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println(r)
+        }
+    }()
+
     serviceName := os.Args[1]
     fmt.Println("Let's see if I can get bash running on", serviceName, "...")
 
@@ -15,8 +21,6 @@ func main() {
 
     kubeCtlPath, err := kubectlLocation()
     handleError(err)
-
-    fmt.Println(kubeCtlPath)
 
     err = runBashOnPod(kubeCtlPath, podName)
     handleError(err)
